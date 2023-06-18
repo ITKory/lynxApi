@@ -1,0 +1,9 @@
+﻿@lynxApi_HostAddress = https://localhost:7065
+
+Get {{lynxApi_HostAddress}}/client/all
+
+###
+
+Get {{lynxApi_HostAddress}}/
+
+###
