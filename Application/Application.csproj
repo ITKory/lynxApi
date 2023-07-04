@@ -14,4 +14,11 @@
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Departure\Commands\" />
+    <Folder Include="Departure\CommandHandlers\" />
+    <Folder Include="Departure\Queries\" />
+    <Folder Include="Departure\QueryHandlers\" />
+  </ItemGroup>
+
 </Project>

@@ -23,7 +23,7 @@ public partial class Profile
 
     public virtual City City { get; set; } = null!;
 
-    public virtual Location Location { get; set; } = null!;
+    public virtual Location? Location { get; set; }
 
     public virtual ICollection<SearchRequest> SearchRequestLosts { get; set; } = new List<SearchRequest>();
 

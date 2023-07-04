@@ -21,8 +21,7 @@ namespace Application.Profiles.CommandHandlers
 
         public async Task<Profile> Handle(UpdateProfile request, CancellationToken cancellationToken)
         {
-            _genericRepository.Update(request.ChangeableProfile);
-            return request.ChangeableProfile;
+             return    await _genericRepository.UpdateAsync(request.ChangeableProfile);
         }
     }
 }

@@ -2,14 +2,14 @@
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
- 
- 
-
 namespace DataAccess;
 
 public partial class NeondbContext : DbContext
 {
- 
+    public NeondbContext()
+    {
+    }
+
     private readonly IConfiguration _config;
     public NeondbContext(IConfiguration configuration)
     {
@@ -39,9 +39,7 @@ public partial class NeondbContext : DbContext
     public virtual DbSet<Tag> Tags { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-         => optionsBuilder.UseNpgsql(_config.GetConnectionString("DbConnectionString"));
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) => optionsBuilder.UseNpgsql(_config.GetConnectionString("DbConnectionString"));
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<City>(entity =>
@@ -146,7 +144,6 @@ public partial class NeondbContext : DbContext
 
             entity.HasOne(d => d.Location).WithMany(p => p.Profiles)
                 .HasForeignKey(d => d.LocationId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("profile_location_id_foreign");
         });
 

@@ -19,8 +19,8 @@ namespace Application.Profiles.QueryHandlers
         }
         public async Task<ICollection<Profile>> Handle(GetAllProfiles request, CancellationToken cancellationToken)
         {
-           var temp = await _genericRepository.GetAllAsync();
-           return temp;
+            return await _genericRepository.GetAllAsync();
+             
         }
     }
 }
