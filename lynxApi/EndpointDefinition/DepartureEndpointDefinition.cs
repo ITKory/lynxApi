@@ -18,7 +18,7 @@ public class DepartureEndpointDefinition : IEndpointDefinition
     {
         var getAllDepartures = new GetAllEntity<SearchDeparture>();
       var departures =    await mediator.Send(getAllDepartures);
-        return TypedResults.Ok(departures);
+        return departures;
     }
 
 }
