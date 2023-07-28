@@ -11,7 +11,7 @@ public partial class NeondbContext : DbContext
     }
 
     private readonly IConfiguration _config;
-    public NeondbContext(IConfiguration configuration)
+        : base(options)
     {
         _config = configuration;
     }
