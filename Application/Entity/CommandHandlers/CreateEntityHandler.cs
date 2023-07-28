@@ -1,5 +1,5 @@
 ﻿using Application.Abstractions;
-using Application.Profiles.Commands;
+using Application.Entity.Command;
 using Domain.Models;
 using MediatR;
 using System;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Profiles.CommandHandlers
+namespace Application.Entity.CommandHandlers
 {
     public class CreateEntityHandler<TEntity> : IRequestHandler<CreateEntity<TEntity>, TEntity> where TEntity : class
     {

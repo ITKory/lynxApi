@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DataAccess.Repositories
 {
-    public class GenericRepository<TEntity>: IGenericRepository<TEntity> where TEntity : class
+    public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
     {
         protected NeondbContext _context;
         protected DbSet<TEntity> _entities;
@@ -15,10 +15,10 @@ namespace DataAccess.Repositories
         }
         public async Task<ICollection<TEntity>> GetAllAsync()
         {
-            
-            var collection =     await _entities.AsNoTracking().ToListAsync();
+
+            var collection = await _entities.AsNoTracking().ToListAsync();
             return collection;
-        }   
+        }
 
         public IEnumerable<TEntity> Get(Func<TEntity, bool> predicate)
         {
@@ -36,17 +36,21 @@ namespace DataAccess.Repositories
             _context.SaveChanges();
             return item;
         }
-        public void Update(TEntity item)
+        public async Task<TEntity> UpdateAsync(TEntity item)
         {
             _context.Entry(item).State = EntityState.Modified;
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
+            return item;
         }
         public async Task<TEntity> Remove(int id)
         {
-           var profile  = await _context.FindAsync<TEntity>(id);
-            _entities.Remove(profile);
-            _context.SaveChanges();
-            return profile;
+            var item = await _context.FindAsync<TEntity>(id);
+            if (item != null)
+            {
+                _entities.Remove(item);
+                _context.SaveChanges();
+            }
+            return item;
         }
 
 

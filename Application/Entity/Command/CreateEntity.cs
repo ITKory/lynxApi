@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Application.Profiles.Commands
+namespace Application.Entity.Command
 {
     public class CreateEntity<TEntity> : IRequest<TEntity> where TEntity : class
     {
-        public  TEntity Entity { get; set; }
+       public TEntity Entity { get; set; }
     }
 }
