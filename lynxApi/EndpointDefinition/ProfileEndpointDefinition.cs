@@ -3,6 +3,7 @@ using Application.Entity.Command;
 using Application.Entity.Queries;
 using Application.Profiles.Commands;
 using Application.Profiles.Queries;
+using Application.Users.Command;
 using Domain.Models;
 using lynxApi.Abstractions;
 using MediatR;
@@ -23,13 +24,11 @@ namespace lynxApi.EndpointDefinition
         private async Task<IResult> GetAllProfiles(IMediator mediator )
         {
 
-            var getAllprofiles = new GetAllProfiles();
-            var profiles =   await mediator.Send(getAllprofiles);
-            return TypedResults.Ok(profiles);
+            var getAllProfiles = new GetAllEntity<Profile>();
+            var profiles =   await mediator.Send(getAllProfiles);
+            return Results.Ok(profiles);
 
-            /*   var profiles = new GetAllEntity<Profile>();
-               await mediator.Send(profiles);
-               return TypedResults.Ok(profiles);*/
+                    
         }
         private async Task<IResult> DeleteProfile(IMediator mediator, int id )
             {
@@ -45,9 +44,9 @@ namespace lynxApi.EndpointDefinition
         } 
         private async Task<IResult> AddProfile(IMediator mediator, Profile profile) 
         {
-            var newProfile = new CreateEntity<Profile>() { Entity = profile };
-            var createdProfile = await mediator.Send(newProfile);
-            return TypedResults.Ok(createdProfile);
+            var newProfile = new CreateProfile() { NewProfile = profile };
+            return await mediator.Send(newProfile);
+            
         }
     }
 }

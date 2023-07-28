@@ -1,5 +1,6 @@
 ﻿using Domain.Models;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Application.Profiles.Commands;
 
-    public class CreateProfile : IRequest<Profile>
+    public class CreateProfile : IRequest<IResult>
     {
         public Profile NewProfile { get; set; }  
          

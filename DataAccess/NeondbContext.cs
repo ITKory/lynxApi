@@ -1,17 +1,14 @@
-﻿
-using Domain.Models;
+﻿using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+
+
 namespace DataAccess;
 
 public partial class NeondbContext : DbContext
 {
-    public NeondbContext()
-    {
-    }
-
     private readonly IConfiguration _config;
-        : base(options)
+    public NeondbContext(IConfiguration configuration)
     {
         _config = configuration;
     }
@@ -39,7 +36,9 @@ public partial class NeondbContext : DbContext
     public virtual DbSet<Tag> Tags { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) => optionsBuilder.UseNpgsql(_config.GetConnectionString("DbConnectionString"));
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+         => optionsBuilder.UseNpgsql(_config.GetConnectionString("DbConnectionString"));
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<City>(entity =>
@@ -60,6 +59,7 @@ public partial class NeondbContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.IsActive).HasColumnName("is_active");
+            entity.Property(e => e.IsArrived).HasColumnName("is_arrived");
             entity.Property(e => e.SearchDepartureId).HasColumnName("search_departure_id");
             entity.Property(e => e.Title).HasColumnName("title");
 
@@ -129,7 +129,7 @@ public partial class NeondbContext : DbContext
             entity.ToTable("profile");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.BDay).HasColumnName("bDay");
+            entity.Property(e => e.Birthday).HasColumnName("birthday");
             entity.Property(e => e.Call).HasColumnName("call");
             entity.Property(e => e.CityId).HasColumnName("city_id");
             entity.Property(e => e.LocationId).HasColumnName("location_id");
@@ -177,6 +177,8 @@ public partial class NeondbContext : DbContext
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CartographerId).HasColumnName("cartographer_id");
             entity.Property(e => e.Date).HasColumnName("date");
+            entity.Property(e => e.IsActive).HasColumnName("is_active");
+            entity.Property(e => e.IsUrgent).HasColumnName("is_urgent");
             entity.Property(e => e.LocationId).HasColumnName("location_id");
             entity.Property(e => e.SearchAdministratorId).HasColumnName("search_administrator_id");
             entity.Property(e => e.SearchRequestId).HasColumnName("search_request_id");
@@ -210,14 +212,21 @@ public partial class NeondbContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.Comment).HasColumnName("comment");
+            entity.Property(e => e.Date).HasColumnName("date");
             entity.Property(e => e.DateOfFound).HasColumnName("date_of_found");
             entity.Property(e => e.DateOfLosee).HasColumnName("date_of_losee");
             entity.Property(e => e.Face).HasColumnName("face");
             entity.Property(e => e.IsActive).HasColumnName("is_active");
             entity.Property(e => e.IsFound).HasColumnName("is_found");
+            entity.Property(e => e.LocationId).HasColumnName("location_id");
             entity.Property(e => e.LostId).HasColumnName("lost_id");
             entity.Property(e => e.MissingInformerId).HasColumnName("missing_informer_id");
             entity.Property(e => e.RequestAdministratorId).HasColumnName("request_administrator_id");
+
+            entity.HasOne(d => d.Location).WithMany(p => p.SearchRequests)
+                .HasForeignKey(d => d.LocationId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("search_request_location_id_foreign");
 
             entity.HasOne(d => d.Lost).WithMany(p => p.SearchRequestLosts)
                 .HasForeignKey(d => d.LostId)
@@ -226,12 +235,10 @@ public partial class NeondbContext : DbContext
 
             entity.HasOne(d => d.MissingInformer).WithMany(p => p.SearchRequestMissingInformers)
                 .HasForeignKey(d => d.MissingInformerId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("search_request_missing_informer_id_foreign");
 
             entity.HasOne(d => d.RequestAdministrator).WithMany(p => p.SearchRequests)
                 .HasForeignKey(d => d.RequestAdministratorId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("search_request_request_administrator_id_foreign");
         });
 

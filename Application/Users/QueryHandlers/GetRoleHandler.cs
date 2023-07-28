@@ -3,6 +3,7 @@ using Application.Profiles.Queries;
 using Application.Users.Queries;
 using Domain.Models;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Application.Users.QueryHandlers
 {
-    public class GetRoleHandler : IRequestHandler<GetRole, ICollection<Role>>
+    public class GetRoleHandler : IRequestHandler<GetRole, IResult>
     {
         private readonly IUserRepository _repository;
 
@@ -20,7 +21,7 @@ namespace Application.Users.QueryHandlers
             _repository = repository;
         }
 
-        public async Task<ICollection<Role>> Handle(GetRole request, CancellationToken cancellationToken)
+        public async Task<IResult> Handle(GetRole request, CancellationToken cancellationToken)
         {
             return await _repository.GetUserRole(request.Id);
         }

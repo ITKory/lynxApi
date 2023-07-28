@@ -13,11 +13,9 @@ builder.RegisterServices();
 
 var app = builder.Build();
 
+app.RegisterEndpointDefinitions();
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.RegisterEndpointDefinitions();
- 
 
 
 app.Run();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Domain.Models;
 
@@ -17,8 +18,13 @@ public partial class SearchDeparture
 
     public int LocationId { get; set; }
 
+    public bool IsUrgent { get; set; }
+
+    public bool IsActive { get; set; }
+
     public virtual User Cartographer { get; set; } = null!;
 
+    [JsonIgnore]
     public virtual ICollection<Crew> Crews { get; set; } = new List<Crew>();
 
     public virtual Location Location { get; set; } = null!;
@@ -26,6 +32,7 @@ public partial class SearchDeparture
     public virtual User SearchAdministrator { get; set; } = null!;
 
     public virtual SearchRequest SearchRequest { get; set; } = null!;
-
+    
+    [JsonIgnore]
     public virtual ICollection<SeekerRegistration> SeekerRegistrations { get; set; } = new List<SeekerRegistration>();
 }

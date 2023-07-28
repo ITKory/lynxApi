@@ -1,4 +1,7 @@
 ﻿using Application.Abstractions;
+using Domain.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,49 +10,85 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Repositories
 {
-    public class StatisticRepository:IStatisticRepository
+    public class StatisticRepository : IStatisticRepository
     {
         protected NeondbContext _context;
-        public StatisticRepository(NeondbContext context )
+        public StatisticRepository(NeondbContext context)
         {
             _context = context;
         }
 
-        public void GetUserStat( int userId)
+        public async Task<IResult> GetUserStat(int userId)
         {
-                var userStat= 
-                _context.SeekerRegistrations
-                .Where(s => s.User.Id == userId)
-                .Select(p => new
-                 {
-                StartTime = p.StartAt,
-                EndTime = p.EndAt,
-                TotalTime = new TimeOnly(
-                p.EndAt.Hour - p.StartAt.Hour,
-                p.StartAt.Minute - p.EndAt.Minute,
-                p.StartAt.Minute - p.EndAt.Minute
-                ),
-                Departure = p.SearchDepartureId,
-                Found = p.SearchDeparture.SearchRequest.IsFound,
-                 });
-            var userDepartureStat = new
+            if (_context.Users.Count(u => u.Id == userId) == 0)
+                return Results.BadRequest();
+
+            var userRegStat = _context.SeekerRegistrations
+                .Where(sr => sr.UserId == userId);
+
+            var userDeparturesIdList = userRegStat
+                .Select(sr => sr.SearchDepartureId);
+
+            var userDepartures = _context.SearchDepartures
+                .Where(sd => userDeparturesIdList.Where(d => d == sd.Id).Any());
+
+            var founds = _context.FoundStats
+                .Where(s => s.UserId == userId);
+
+            var response = new
             {
-                userStat,
-                DepartureCount = userStat.Count()
+                RegStat = userRegStat,
+                DeparturesCount = userDepartures.Count(),
+                FoundsCount = founds.Count()
             };
-            
-        }
-        public void GetDepartureStat()
-        {
+
+            return Results.Ok(response);
 
         }
-        public void GetComplexStat()
+
+        public async Task<IResult> GetRequestStat()
         {
+            DateOnly startingDate = DateOnly.FromDateTime(DateTime.Now);
+
+            DateOnly endingDate = startingDate.AddMonths(1);
+
+            var departures = _context.SearchDepartures.ToList();
+
+            var departuresByPeriod = departures
+                .Where(d => d.Date > startingDate && d.Date < endingDate);
+
+            var activeDepartures = departuresByPeriod
+                .Where(d => d.IsActive == true);
+
+            var requests = _context.SearchRequests.ToList();
+
+            var requestsByPeriod = requests
+                .Where(d => d.Date > startingDate && d.Date < endingDate);
+
+            var activeRequest = requestsByPeriod
+                .Where(d => d.IsActive == true);
+
+            var successRequest = requestsByPeriod
+                .Where(r => r.IsFound == true);
+
+            var successDeparture = departuresByPeriod
+                .Where(d => d.IsActive == false && successRequest.Where(r => r.Id == d.SearchRequestId).Any());
+
+            var response = new
+            {
+                Departures = departures.Count(),
+                DeparturesByPeriod = requestsByPeriod.Count(),
+                ActiveDepartures = activeDepartures.Count(),
+                Requests = requests.Count(),
+                RequestsByPeriod = requestsByPeriod.Count(),
+                ActiveRequests = activeRequest.Count(),
+                SuccessDeparture = successDeparture.Count(),
+                SuccessRequest = successRequest.Count()
+
+            };
+            return Results.Ok(response);
 
         }
-        public void GetComplexStatByPeriod(DateTime startPeriod , DateTime endPeriod)
-        {
 
-        }
     }
 }

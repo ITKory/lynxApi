@@ -1,4 +1,5 @@
 ﻿using Domain.Models;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,8 @@ namespace Application.Abstractions
 {
     public interface IUserRepository
     {
-        Task<ICollection<Role>> GetUserRole(int id);
+        Task<IResult> GetUserRole(int id);
+        Task<IResult> LoginUser(string login, string password);
+        Task<IResult> AddUser(User user);
     }
 }

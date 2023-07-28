@@ -15,10 +15,10 @@ namespace DataAccess.Repositories
         }
         public async Task<ICollection<TEntity>> GetAllAsync()
         {
-            
-            var collection =  await _entities.AsNoTracking().ToListAsync();
+
+            var collection = await _entities.AsNoTracking().ToListAsync();
             return collection;
-        }   
+        }
 
         public IEnumerable<TEntity> Get(Func<TEntity, bool> predicate)
         {
@@ -44,10 +44,13 @@ namespace DataAccess.Repositories
         }
         public async Task<TEntity> Remove(int id)
         {
-           var profile  = await _context.FindAsync<TEntity>(id);
-            _entities.Remove(profile);
-            _context.SaveChanges();
-            return profile;
+            var item = await _context.FindAsync<TEntity>(id);
+            if (item != null)
+            {
+                _entities.Remove(item);
+                _context.SaveChanges();
+            }
+            return item;
         }
 
 

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Repositories
 {
-    public class SeekerRegistrationRepository: ISeekerRegistrationRepository
+    public class SeekerRegistrationRepository : ISeekerRegistrationRepository
     {
         NeondbContext _context;
 
@@ -25,24 +25,24 @@ namespace DataAccess.Repositories
             _context.SaveChanges();
 
         }
-        public void SetTime(int userId, TimeOnly startTime , TimeOnly endTime)
+        public void SetTime(int userId, TimeOnly startTime, TimeOnly endTime)
         {
             SeekerRegistration seekerRegistrations = GetEntityInfo(userId);
             seekerRegistrations.StartAt = startTime;
-            seekerRegistrations.EndAt= endTime;
+            seekerRegistrations.EndAt = endTime;
             _context.SaveChanges();
 
         }
-        public void SeTime(int userId,   TimeOnly endTime)
+        public void SeTime(int userId, TimeOnly endTime)
         {
             SeekerRegistration seekerRegistrations = GetEntityInfo(userId);
             seekerRegistrations.EndAt = endTime;
             _context.SaveChanges();
         }
 
-        private SeekerRegistration  GetEntityInfo(  int userId)
+        private SeekerRegistration GetEntityInfo(int userId)
         {
-         return _context.SeekerRegistrations.Where(s => s.User.Id == userId).First();
+            return _context.SeekerRegistrations.Where(s => s.User.Id == userId).First();
         }
 
 
