@@ -218,6 +218,7 @@ public partial class NeondbContext : DbContext
             entity.Property(e => e.Face).HasColumnName("face");
             entity.Property(e => e.IsActive).HasColumnName("is_active");
             entity.Property(e => e.IsFound).HasColumnName("is_found");
+            entity.Property(e => e.IsDied).HasColumnName("is_died");
             entity.Property(e => e.LocationId).HasColumnName("location_id");
             entity.Property(e => e.LostId).HasColumnName("lost_id");
             entity.Property(e => e.MissingInformerId).HasColumnName("missing_informer_id");

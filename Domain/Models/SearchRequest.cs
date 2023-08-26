@@ -25,6 +25,7 @@ public partial class SearchRequest
     public bool IsActive { get; set; }
 
     public bool IsFound { get; set; }
+    public bool IsDied { get; set; }  
 
     public int LocationId { get; set; }
 

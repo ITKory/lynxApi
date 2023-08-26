@@ -23,27 +23,22 @@ namespace lynxApi.EndpointDefinition
             departure.MapPost("/ping",  Ping);
         }
 
-        [Authorize]
         private async Task<IResult> GetAllUsers(IMediator mediator)
         {
-            var getAllUsers = new GetAllEntity<User>();
-            var users = await mediator.Send(getAllUsers);
-            return TypedResults.Ok(users);
+            var getAllUsers = new GetAllUsers();
+            return await  mediator.Send(getAllUsers);
+            
         }
         private async Task<IResult> AddUser(IMediator mediator, User user)
         {
             var newUser = new CreateUser {  NewUser = user };
             return await mediator.Send(newUser);
- 
-       
         }
 
         private async Task<IResult> LoginUser(IMediator mediator, LoginModel loginModel)  
         {
-
             var loginUser = new LoginUser() { Login = loginModel.Login, Password = loginModel.Password };
             return await mediator.Send(loginUser);
-    
         }
 
         public async Task Ping(HttpContext context)

@@ -20,7 +20,6 @@ namespace Application.Profiles.QueryHandlers
         public async Task<ICollection<Profile>> Handle(GetAllProfiles request, CancellationToken cancellationToken)
         {
             return await _genericRepository.GetAllAsync();
-             
         }
     }
 }

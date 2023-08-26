@@ -24,7 +24,7 @@ namespace Application.Users.CommandHandlers
 
         public async Task<IResult> Handle(CreateUser request, CancellationToken cancellationToken)
         {
-           return await _userRepository.AddUser(request.NewUser);
+           return await _userRepository.AddUserAsync(request.NewUser);
         }
     }
 }

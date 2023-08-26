@@ -2,10 +2,12 @@
 using Domain.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace DataAccess.Repositories
@@ -20,26 +22,34 @@ namespace DataAccess.Repositories
 
         public async Task<IResult> GetUserStat(int userId)
         {
-            if (_context.Users.Count(u => u.Id == userId) == 0)
-                return Results.BadRequest();
 
             var userRegStat = _context.SeekerRegistrations
+                .Include(s=>s.SearchDeparture)
                 .Where(sr => sr.UserId == userId);
-
-            var userDeparturesIdList = userRegStat
-                .Select(sr => sr.SearchDepartureId);
-
-            var userDepartures = _context.SearchDepartures
-                .Where(sd => userDeparturesIdList.Where(d => d == sd.Id).Any());
+            if(userRegStat == null)
+            {
+                return Results.BadRequest();
+            }
 
             var founds = _context.FoundStats
                 .Where(s => s.UserId == userId);
 
+            List<(TimeSpan time,int departureId)> times = new();
+
+            foreach( var u in userRegStat) {
+                 times.Add((
+                    DateTime.Parse(u.EndAt.ToString()).Subtract(DateTime.Parse(u.StartAt.ToString())),
+                      u.SearchDepartureId ));
+            }
+
+
             var response = new
             {
                 RegStat = userRegStat,
-                DeparturesCount = userDepartures.Count(),
-                FoundsCount = founds.Count()
+                DeparturesCount = userRegStat.Count(),
+                FoundsCount = founds.Count(),
+                Departures = times.Select(i =>  new { i.time, i.departureId }),
+                Total = TimeSpan.FromMinutes( times.Sum(t=>t.time.TotalMinutes))
             };
 
             return Results.Ok(response);
@@ -48,14 +58,16 @@ namespace DataAccess.Repositories
 
         public async Task<IResult> GetRequestStat()
         {
-            DateOnly startingDate = DateOnly.FromDateTime(DateTime.Now);
+            DateOnly startingDate = DateOnly.FromDateTime(new DateTime(DateTime.Now.Year-1, DateTime.Now.Month, DateTime.Now.Day));
 
-            DateOnly endingDate = startingDate.AddMonths(1);
+            DateOnly endingDate = DateOnly.FromDateTime(DateTime.Now.AddMonths(1));
 
-            var departures = _context.SearchDepartures.ToList();
+            var departures = _context.SearchDepartures
+                .Include(D=>D.SearchRequest)
+                .ToList();
 
             var departuresByPeriod = departures
-                .Where(d => d.Date > startingDate && d.Date < endingDate);
+                .Where(d => d.Date > startingDate && d.Date < endingDate );
 
             var activeDepartures = departuresByPeriod
                 .Where(d => d.IsActive == true);
@@ -68,23 +80,27 @@ namespace DataAccess.Repositories
             var activeRequest = requestsByPeriod
                 .Where(d => d.IsActive == true);
 
-            var successRequest = requestsByPeriod
+            var closeRequest = requestsByPeriod
                 .Where(r => r.IsFound == true);
 
-            var successDeparture = departuresByPeriod
-                .Where(d => d.IsActive == false && successRequest.Where(r => r.Id == d.SearchRequestId).Any());
+            var closeDeparture = departuresByPeriod
+                .Where(d => d.IsActive == false && closeRequest.Where(r => r.Id == d.SearchRequestId).Any());
+
+            var closeIsAliveRequest = closeRequest.Where(r => r.IsDied == false);
+            var closeIsDiedRequest = closeRequest.Where(r => r.IsDied == true);
 
             var response = new
             {
                 Departures = departures.Count(),
                 DeparturesByPeriod = requestsByPeriod.Count(),
                 ActiveDepartures = activeDepartures.Count(),
+                CloseDeparture = closeDeparture.Count(),
                 Requests = requests.Count(),
                 RequestsByPeriod = requestsByPeriod.Count(),
                 ActiveRequests = activeRequest.Count(),
-                SuccessDeparture = successDeparture.Count(),
-                SuccessRequest = successRequest.Count()
-
+                CloseRequest = closeRequest.Count(),
+                CloseIsAliveRequest = closeIsAliveRequest.Count(),
+                closeIsDiedRequest = closeIsDiedRequest.Count()
             };
             return Results.Ok(response);
 

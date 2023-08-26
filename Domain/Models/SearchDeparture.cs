@@ -32,7 +32,7 @@ public partial class SearchDeparture
     public virtual User SearchAdministrator { get; set; } = null!;
 
     public virtual SearchRequest SearchRequest { get; set; } = null!;
-    
+
     [JsonIgnore]
     public virtual ICollection<SeekerRegistration> SeekerRegistrations { get; set; } = new List<SeekerRegistration>();
 }

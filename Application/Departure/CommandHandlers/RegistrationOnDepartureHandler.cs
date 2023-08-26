@@ -13,15 +13,15 @@ namespace Application.Departure.CommandHandlers
 {
     public class RegistrationOnDepartureHandler : IRequestHandler<RegistrationOnDepartureCommand, IResult>
     {
-        private  IDepartureRepository _departureRepository;
-        public RegistrationOnDepartureHandler( IDepartureRepository departureRepository)
+        private IDepartureRepository _departureRepository;
+        public RegistrationOnDepartureHandler(IDepartureRepository departureRepository)
         {
             _departureRepository = departureRepository;
         }
 
         public async Task<IResult> Handle(RegistrationOnDepartureCommand request, CancellationToken cancellationToken)
         {
-          return  _departureRepository.RegistrationOnDeparture(request.UserId, request.DepartureId);
+            return _departureRepository.RegistrationOnDeparture(request.UserId, request.SearchDepartureId, request.StartTime);
         }
     }
 }

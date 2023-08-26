@@ -8,8 +8,8 @@ namespace Application.Service
 {
     public interface IAccountService
     {
-        public string GetMyRole();
-        public string HashPassword(string password);
+        string GetMyRole();
+        string HashPassword(string password);
         bool VerifyPassword(string passwordHash, string password);
     }
 }

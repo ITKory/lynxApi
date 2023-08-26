@@ -1,6 +1,5 @@
 ﻿using Application.Abstractions;
 using Application.Profiles.Commands;
-using DataAccess.Auth;
 using DataAccess.Repositories;
 using DataAccess;
 using Domain.Models;
@@ -22,6 +21,8 @@ using Application.Users.Command;
 using Application.Users.CommandHandlers;
 using Application.Departure.Queries;
 using Application.Departure.QueryHandlers;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Text;
 
 namespace lynxApi.Extensions
 {
@@ -29,19 +30,19 @@ namespace lynxApi.Extensions
     {
         public  static void RegisterServices( this WebApplicationBuilder builder)
         {
-             
+        
             builder.Services.AddAuthorization();
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options => {
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,
-                        ValidIssuer = AuthOption.ISSUER,
+                        ValidIssuer = builder.Configuration["Ayth:Issuer"] ,
                         ValidateAudience = true,
-                        ValidAudience = AuthOption.AUDIENCE,
+                        ValidAudience = builder.Configuration["Ayth:Audience"],
                         ValidateLifetime = true,
-                        IssuerSigningKey = AuthOption.GetSymmetricSecurityKey(),
-                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Ayth:Key"])),
+                    ValidateIssuerSigningKey = true,
                     };
                 });
             
@@ -52,16 +53,20 @@ namespace lynxApi.Extensions
             builder.Services.AddTransient<IGenericRepository<Profile>, GenericRepository<Profile>>();
             builder.Services.AddTransient<IGenericRepository<SearchDeparture>, GenericRepository<SearchDeparture>>();
             builder.Services.AddTransient<IGenericRepository<City>, GenericRepository<City>>();
+
             builder.Services.AddTransient<IUserRepository, UserRepository>();
             builder.Services.AddTransient<IDepartureRepository, DepartureRepository>();
             builder.Services.AddTransient<ISeekerRegistrationRepository, SeekerRegistrationRepository>();
             builder.Services.AddTransient<IStatisticRepository, StatisticRepository>();
             builder.Services.AddTransient<ICrewRepository, CrewRepository>();
             builder.Services.AddTransient<IAccountService, AccountService>();
+            builder.Services.AddTransient<IRequestRepository, RequestRepository>();
 
             builder.Services.AddTransient<IRequestHandler<GetAllEntity<SearchDeparture>, ICollection<SearchDeparture>>,GetAllEntityHandler<SearchDeparture>>();
             builder.Services.AddTransient<IRequestHandler<GetAllEntity<City>, ICollection<City>>,GetAllEntityHandler<City>>();
             builder.Services.AddTransient<IRequestHandler<GetAllEntity<Profile>, ICollection<Profile>>,GetAllEntityHandler<Profile>>();
+            builder.Services.AddTransient<IRequestHandler<Get<Profile>, Profile>,GetQueryHandler<Profile>>();
+            builder.Services.AddTransient<IRequestHandler<Get<User>, User>,GetQueryHandler<User>>();
             builder.Services.AddTransient<IRequestHandler<GetAllEntity<User>, ICollection<User>>,GetAllEntityHandler<User>>();
 
            builder.Services.AddTransient<IRequestHandler<CreateEntity<Profile>,Profile>, CreateEntityHandler<Profile>>();

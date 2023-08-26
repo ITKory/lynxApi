@@ -13,6 +13,11 @@ namespace Application.Abstractions
         Task<IResult> GetDeparture(int departureId);
         IResult GetDepartureParticipants(int departureId);
         Task<IResult> GetAllDeparture();
-        IResult RegistrationOnDeparture(int userId, int departureId);
+        IResult RegistrationOnDeparture(int userId, int departureId, TimeOnly startAt);
+        Task<IResult> CloseDeparture(int departureId);
+        Task<IResult> CreateDeparture(SearchDeparture searchDeparture);
+        Task<IResult> GetDepartureLocationAsync();
+        Task<IResult> RemoveDeparture(int departureId);
+        Task<IResult> UpdateStatusAsync(ListItemModel item);
     }
 }

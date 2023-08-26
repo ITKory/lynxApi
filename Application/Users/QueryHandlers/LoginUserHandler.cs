@@ -20,12 +20,11 @@ namespace Application.Users.QueryHandlers
         public LoginUserHandler(IUserRepository userRepository)
         {
             _userRepository = userRepository;
-          
         }
 
         public async Task<IResult> Handle(LoginUser request, CancellationToken cancellationToken)
         {
-           return await _userRepository.LoginUser(request.Login, request.Password);
+           return await _userRepository.LoginUserAsync(request.Login, request.Password);
         }
     }
 }

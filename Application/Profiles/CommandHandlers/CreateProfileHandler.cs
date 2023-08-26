@@ -23,11 +23,15 @@ namespace Application.Profiles.CommandHandlers
         public async Task<IResult> Handle(CreateProfile request, CancellationToken cancellationToken)
         {
          
-            var profilePhone = _genericRepository.Get((p) => { return p.Phone == request.NewProfile.Phone; }).FirstOrDefault()?.Phone ;
+            var profilePhone = _genericRepository
+                .Get((p) => { return p.Phone == request.NewProfile.Phone; })
+                .FirstOrDefault()?.Phone ;
+
             if (profilePhone != null)
                 return Results.BadRequest();
           
-            var NewProfile = await _genericRepository.CreateAsync(request.NewProfile);
+            var NewProfile = await _genericRepository
+                .CreateAsync(request.NewProfile);
 
             return Results.Ok(NewProfile);
         }

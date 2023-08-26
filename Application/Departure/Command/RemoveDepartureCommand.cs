@@ -8,10 +8,8 @@ using System.Threading.Tasks;
 
 namespace Application.Departure.Command
 {
-    public class RegistrationOnDepartureCommand : IRequest<IResult>
+    public class RemoveDepartureCommand:IRequest<IResult>
     {
-        public int SearchDepartureId { get; set; }
-        public int UserId { get; set; }
-        public TimeOnly StartTime { get; set; }
+        public int departureId { get; set; }
     }
 }

@@ -42,7 +42,8 @@ namespace DataAccess.Repositories
 
         private SeekerRegistration GetEntityInfo(int userId)
         {
-            return _context.SeekerRegistrations.Where(s => s.User.Id == userId).First();
+            return _context.SeekerRegistrations
+                .First(s => s.User.Id == userId);
         }
 
 

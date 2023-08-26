@@ -23,7 +23,7 @@ namespace Application.Users.QueryHandlers
 
         public async Task<IResult> Handle(GetRole request, CancellationToken cancellationToken)
         {
-            return await _repository.GetUserRole(request.Id);
+            return await _repository.GetUserRoleAsync(request.Id);
         }
     }
 }

@@ -10,8 +10,9 @@ namespace Application.Abstractions
 {
     public interface IUserRepository
     {
-        Task<IResult> GetUserRole(int id);
-        Task<IResult> LoginUser(string login, string password);
-        Task<IResult> AddUser(User user);
+        Task<IResult> GetUserRoleAsync(int id);
+        Task<IResult> LoginUserAsync(string login, string password);
+        Task<IResult> AddUserAsync(User user);
+        Task<IResult> GetAllUsers();
     }
 }

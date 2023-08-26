@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions;
 using Application.Entity.Command;
 using Application.Entity.Queries;
+using Application.Entity.QueryHandlers;
 using Application.Profiles.Commands;
 using Application.Profiles.Queries;
 using Application.Users.Command;
@@ -20,6 +21,7 @@ namespace lynxApi.EndpointDefinition
             profile.MapPost("/add", AddProfile);
             profile.MapPost("/update", UpdateProfile);
             profile.MapDelete("/del/{id}",  DeleteProfile);
+            profile.MapGet("/get",  GetProfileById);
         }
         private async Task<IResult> GetAllProfiles(IMediator mediator )
         {
@@ -27,8 +29,18 @@ namespace lynxApi.EndpointDefinition
             var getAllProfiles = new GetAllEntity<Profile>();
             var profiles =   await mediator.Send(getAllProfiles);
             return Results.Ok(profiles);
-
                     
+        }
+        private async Task<IResult> GetProfileById(IMediator mediator, int userId)
+        {
+            var getUser = new Get<User>() { Predicate = u => u.Id == userId   };
+            var user = await mediator.Send(getUser);
+
+            var getProfile = new Get<Profile> { Predicate = p => p.Id == user.ProfileId };
+            var profile = await mediator.Send(getProfile);
+
+            return Results.Ok(profile);
+
         }
         private async Task<IResult> DeleteProfile(IMediator mediator, int id )
             {
